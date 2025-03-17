@@ -1,0 +1,71 @@
+version: '3'
+name: tiktok
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8801:8802"
+    volumes:
+      - ./backend:/app
+      # 添加pip缓存卷以加快依赖安装
+      - pip-cache:/root/.cache/pip
+    environment:
+      - DATABASE_URL=mysql+pymysql://campus_db_user:abc_kkiiccww@db:3306/campus
+      - TZ=Asia/Shanghai
+    command: uvicorn main:app --host 0.0.0.0 --port 8802 --reload
+    networks:
+      - app-network
+    container_name: tiktok-backend
+
+  admin:
+    image: node:20
+    working_dir: /app
+    ports:
+      - "8811:8080"
+    volumes:
+      - ./admin:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - TZ=Asia/Shanghai
+    command: sh -c "npm install && npm run serve"
+    networks:
+      - app-network
+    container_name: tiktok-admin
+
+  frontend:
+    image: frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8831:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=rm-f8zh0u32x2cb40fqb3o.mysql.rds.aliyuncs.com
+      - PMA_USER=root
+      - PMA_PASSWORD=abc@123456
+      - PMA_PORT=3306
+      - TZ=Asia/Shanghai
+    networks:
+      - app-network
+    container_name: tiktok-phpmyadmin
+
+volumes:
+  pip-cache:
+
+networks:
+  app-network:
+    driver: bridge
