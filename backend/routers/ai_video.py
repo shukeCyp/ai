@@ -540,7 +540,7 @@ async def create_video(
         resolution=resolution,
         seconds=seconds,
         seed=seed,
-        status=0  # 排队中
+        status=1  # 排队中
     )
 
     global_thread_pool.submit(
