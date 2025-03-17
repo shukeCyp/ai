@@ -1,6 +1,6 @@
 // 默认API基础URL
-// let baseURL = 'http://tkapi.shiyunzi.fun';
-let baseURL = 'http://localhost:8801';
+let baseURL = 'http://aiapi.lyvideo.top';
+// let baseURL = 'http://localhost:8801';
 
 
 // 设置基础URL的方法
